@@ -18,6 +18,8 @@ import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -29,6 +31,7 @@ public class ApplicationTest {
     private String baseUrl = "http://localhost";
 
     private static RestTemplate restTemplate;
+
 
     @Autowired
     private TestH2Repository testH2Repository;
@@ -42,6 +45,11 @@ public class ApplicationTest {
     public void setUp() {
         baseUrl = baseUrl.concat(":").concat(String.valueOf(port))
                 .concat("/api/assignments");
+    }
+
+    @BeforeEach
+    public void cleanDatabase() {
+        testH2Repository.deleteAll();
     }
 
     // -------------------------------------Integration Tests ----------------------
@@ -137,6 +145,21 @@ public class ApplicationTest {
         assert response.getStatus() == AssignmentStatus.ACCEPTED;
     }
 
+    @Test
+    public void testDeleteAssignment() {
 
+        RiderAssignment assignment = new RiderAssignment(
+                null, 7004L, 305L,
+                AssignmentStatus.ASSIGNED, null
+        );
+
+        RiderAssignment created = restTemplate.postForObject(
+                baseUrl, assignment, RiderAssignment.class
+        );
+
+        restTemplate.delete(baseUrl + "/" + created.getId());
+
+        assertFalse(testH2Repository.findById(created.getId()).isPresent());
+    }
 
 }
