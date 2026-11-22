@@ -81,8 +81,31 @@ public class ApplicationTest {
         assert response != null;
     }
 
+    @Test
+    public void testGetAssignmentById() {
 
+        RiderAssignment assignment = new RiderAssignment(
+                null,
+                7002L,
+                302L,
+                AssignmentStatus.ASSIGNED,
+                null
+        );
 
+        RiderAssignment created = restTemplate.postForObject(
+                baseUrl,
+                assignment,
+                RiderAssignment.class
+        );
+
+        RiderAssignment response = restTemplate.getForObject(
+                baseUrl + "/" + created.getId(),
+                RiderAssignment.class
+        );
+
+        assert response != null;
+        assert response.getDeliveryId().equals(7002L);
+    }
 
 
 
