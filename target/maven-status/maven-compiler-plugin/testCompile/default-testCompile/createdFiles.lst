@@ -1,0 +1,3 @@
+com\softer\riderassignment\ApplicationTest.class
+com\softer\riderassignment\service\RiderAssignmentServiceTest.class
+com\softer\riderassignment\controller\RiderAssignmentControllerTest.class
