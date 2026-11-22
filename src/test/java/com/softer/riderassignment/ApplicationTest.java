@@ -1,5 +1,8 @@
 package com.softer.riderassignment;
 
+import com.softer.riderassignment.model.RiderAssignment;
+import com.softer.riderassignment.model.AssignmentStatus;
+import org.junit.jupiter.api.Test;
 import com.softer.riderassignment.repository.TestH2Repository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -33,4 +37,38 @@ public class ApplicationTest {
         baseUrl = baseUrl.concat(":").concat(String.valueOf(port))
                 .concat("/api/assignments");
     }
+
+    // -------------------------------------Integration Tests ----------------------
+
+    @Test
+    public void testCreateAssignment() {
+
+        RiderAssignment assignment = new RiderAssignment(
+                null,
+                7001L,
+                301L,
+                AssignmentStatus.ASSIGNED,
+                null
+        );
+
+        RiderAssignment response = restTemplate.postForObject(
+                baseUrl,
+                assignment,
+                RiderAssignment.class
+        );
+
+        assert response != null;
+        assert response.getDeliveryId().equals(7001L);
+        assert response.getRiderId().equals(301L);
+    }
+
+
+
+
+
+
+
+
+
+
 }
